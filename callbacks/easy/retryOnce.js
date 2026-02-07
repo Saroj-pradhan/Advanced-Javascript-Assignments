@@ -7,7 +7,29 @@
 
 
 function retryOnce(fn) {
+    let retry = false;
+return function(cb){
+   
+  function attempt(){
 
+    fn((err,result)=>{
+  if(!err ) {
+  cb(null, result);
+  }else if(!retry){
+retry = true;
+attempt();
+  }
+  else{
+ cb(err,null);
+  }
+
+    })
+    
+}
+    attempt();
+
+
+}
 }
 
 module.exports = retryOnce;
