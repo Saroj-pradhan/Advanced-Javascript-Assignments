@@ -9,11 +9,40 @@
 
 
 class CallbackPool {
-  constructor(limit) {}
+ newLimit = 0; 
+ active = 0;
+ tasks = [];
+  constructor(limit) {
+this.newLimit = limit;
+  }
 
-  run(task, onComplete) {}
+  run(task, onComplete) {
+   
+ if(this.active < this.newLimit){
+      this.active++;
+      task((result) => {
+  
+      onComplete(result)
 
-  _next() {}
+      this.active--
+       this._next()
+})
+    }else{
+      this.tasks.push({task , onComplete})
+    }
+    
+   
+
+  }
+
+  _next() {
+    while(this.active < this.newLimit && this.tasks.length !=0){
+      const{ task,onComplete} = this.tasks.shift();
+
+      this.run(task,onComplete);
+      
+    }
+  }
 }
 
 module.exports = CallbackPool;
