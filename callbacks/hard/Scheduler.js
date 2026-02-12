@@ -9,13 +9,41 @@
 //
 // True preemption is not possible in JavaScript, so tasks must cooperate
 // by yielding execution voluntarily.
-
 class Scheduler {
-  constructor() {}
+  constructor() {
+    this.queue = [];
+    this.running = false;
+  }
 
-  schedule(task, priority = 0) {}
+  schedule(task, priority = 0) {
+    this.queue.push({ task, priority });
+  }
 
-  run(onAllFinished) {}
+  run(onAllFinished) {
+    // sort: higher priority first
+    this.queue.sort((a, b) => b.priority - a.priority);
+
+    this.running = true;
+
+    const runNext = () => {
+      if(this.queue.length > 0){
+        let run = this.queue.shift();
+        run.task((err)=>{
+          if(err){
+          run.onAllFinished(err);
+          }
+          runNext();
+        });
+      }else{
+          this.running = false;
+        onAllFinished(null);
+        return;
+      }
+    }
+    runNext();
+  }
 }
 
 module.exports = Scheduler;
+
+
