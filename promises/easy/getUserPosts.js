@@ -21,9 +21,7 @@ return fetchPosts(user.id);
     })
     .catch((e)=>{
 console.error(e);
-    })
-
-    
+    })    
 }
 
 module.exports = getUserPosts;
